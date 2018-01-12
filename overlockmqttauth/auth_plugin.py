@@ -4,6 +4,13 @@ Could also use these functions in future:
 https://github.com/mbachry/mosquitto_pyauth#auxiliary-module
 """
 
+import logging
+
+from .connections import parse_connection
+
+
+logger = logging.getLogger(__name__)
+
 
 def plugin_init(opts):
     """called on plugin init, opts holds a tuple of (key, value) 2-tuples with
@@ -18,6 +25,14 @@ def plugin_cleanup():
 def unpwd_check(username, password):
     """return True if given username and password pair is allowed to log in
     """
+    connection = parse_connection(username, password)
+
+    if connection.authorized:
+        return True
+    else:
+        logger.error("Unauthorized user - blacklisted == %s", connection.blacklisted)
+
+        return False
 
 def acl_check(clientid, username, topic, access):
     """return True if given user is allowed to subscribe (access =

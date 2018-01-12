@@ -73,9 +73,9 @@ class MQTTConnection(metaclass=ABCMeta):
 
 class V1Connection(MQTTConnection):
 
-    def __init__(self, user, password, client_id):
+    def __init__(self, user, password): #, client_id):
         self.user = user
-        self.client_id = client_id
+        # self.client_id = client_id
 
         (self._secret_type, self._secret) = password
         (api_ver, self._project_id, self._device_id) = user.split(":")
@@ -144,3 +144,16 @@ class V1Connection(MQTTConnection):
     @property
     def secret_type(self):
         return self._secret_type
+
+
+def parse_connection(username, password):
+    if username.startswith("v1"):
+        return V1Connection(username, password)
+    else:
+        raise Exception("Invalid username")
+
+
+__all__ = [
+    "API_V1",
+    "parse_connection",
+]
