@@ -1,0 +1,18 @@
+.bumpversion.cfg
+.coverage
+Dockerfile
+.dockerignore
+.eggs
+.git
+.gitignore
+# MANIFEST.in
+# overlockmqttauth
+overlockmqttauth.egg-info
+.pylintrc
+README.md
+# requirements.txt
+# setup.cfg
+# setup.py
+tests
+.tox
+tox.ini
