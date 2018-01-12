@@ -90,14 +90,14 @@ class V1Connection(MQTTConnection):
     def blacklisted(self):
         if self.secret_type == "p":
             project = projects[self._project_id]
-            for secret in project["secrets"]:
+            for secret in project.secrets:
                 if (secret.val == self._secret) and secret.blacklisted:
                     return True
         else:
             for d in devices:
-                if d["device_id"] == self.device_id \
-                and d["secret"].val == self._secret \
-                and d["secret"].blacklisted:
+                if d.device_id == self.device_id \
+                and d.secret.val == self._secret \
+                and d.secret.blacklisted:
                     return True
 
         return False
@@ -109,23 +109,23 @@ class V1Connection(MQTTConnection):
             return False
 
         try:
-            device = next(d for d in devices if d["device_id"] == self.device_id)
+            device = next(d for d in devices if d.device_id == self.device_id)
         except StopIteration:
             # doesn't exist -> not authorised
             return False
 
         try:
-            project = next(p for p in projects if p["name"] == device["project"])
+            project = next(p for p in projects if p.name == device.project)
         except StopIteration:
             # invalid project -> not authorised (this is a programming error
             # really)
             return False
 
-        if device["secret"].val == self._secret:
+        if device.secret.val == self._secret:
             # Already checked if its blacklisted
             return True
 
-        for s in project["secrets"]:
+        for s in project.secrets:
             if s.val == self._secret:
                 # Already checked if its blacklisted
                 return True
