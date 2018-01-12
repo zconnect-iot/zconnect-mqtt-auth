@@ -21,7 +21,7 @@ projects = [
 devices = [
     {
         "project": "abc123",
-        "device": "blapt",
+        "device_id": "blapt",
         "secret": Secret("2123122413423", False),
     },
 ]
