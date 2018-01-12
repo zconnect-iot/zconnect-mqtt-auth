@@ -36,4 +36,7 @@ IMPORT auth_plugin_pyauth.so /mosquitto/auth_plugin_pyauth.so
 IMPORT local-python/ /usr/local/
 COPY example/mosquitto.conf /mosquitto/config/
 
+EXPOSE 1883
+VOLUME /mosquitto/data
+
 TAG mosquitto_pyauth
