@@ -18,6 +18,10 @@ import paho.mqtt.client as mqtt
 
 from overlockmqttauth.connection import get_connection
 
+
+from overlockmqttauth.auth.mongodb.util import mongo_connect
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +31,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 mqttc = mqtt.Client(client_id="controller.{:s}".format(id_generator()), transport="websockets")
 app = Flask(__name__)
+mongo_connect()
 
 
 class InvalidClientId(Exception):
