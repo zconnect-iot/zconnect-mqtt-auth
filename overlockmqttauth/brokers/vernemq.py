@@ -59,6 +59,32 @@ def auth_on_register():
 
     logger.debug("auth_on_register: %s", as_json)
 
+    connection = get_connection(
+        as_json["username"],
+        as_json["password"],
+        as_json["client_id"],
+    )
+
+    response = {
+        "result": "next"
+    }
+
+    if connection.blacklisted:
+        logger.info("User has been blacklisted")
+
+        response = {
+            "result": "error"
+        }
+
+    if not connection.authorized:
+        logger.info("User not authorized")
+
+        response = {
+            "result": "error"
+        }
+
+    return jsonify(response)
+
 
 @app.route('/on_register', methods=['POST'])
 def on_register():
