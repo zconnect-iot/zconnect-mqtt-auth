@@ -200,7 +200,7 @@ def build_connect_status_payload(_request):
     })
 
 
-def build_disconnect_status_payload(request, dropped):
+def build_disconnect_status_payload(_request, dropped):
     """
     Build the disconnect status payload. It seems as though this is optional
     however the following keys are listed in the IBM documentation.
@@ -220,7 +220,7 @@ def build_disconnect_status_payload(request, dropped):
     #  This is not a typo - disconnect status shares all the fields with connect
     return json.dumps({
         'Protocol': 'mqtt-tcp',
-        'ClientID': request.json['client_id'],
+        'ClientID': _request.json['client_id'],
         'Action': 'Disconnect',
         'Time': datetime.utcnow().isoformat(),
         'Reason': 'Peer disappeared' if dropped else 'Peer disconnected',
@@ -321,9 +321,9 @@ def start_broker():
     # Connect
     mqtt_host = os.getenv('MQTT_HOST', "localhost")
     mqtt_port = int(os.getenv('MQTT_PORT', 1883))
-    logger.info("Connecting to MQTT {} on port {}".format(
+    logger.info("Connecting to MQTT %s on port %s",
         mqtt_host, mqtt_port
-    ))
+    )
     mqttc.loop_start()
     mqttc.connect_async(mqtt_host, mqtt_port, 60)
 

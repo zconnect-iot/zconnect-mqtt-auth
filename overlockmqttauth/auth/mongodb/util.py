@@ -27,7 +27,7 @@ def mongo_connect():
 
     for setting, envvar in extra_settings:
         try:
-            mongo_settings.update(setting=os.environ[envvar])
+            mongo_settings.update(**{setting: os.environ[envvar]})
         except KeyError:
             pass
 

@@ -44,7 +44,7 @@ class MQTTConnection:
         Returns:
             bool: if the user is authenticated
         """
-        
+
         return self._auth.authenticated
 
     def subscribe_authorized(self, topic):

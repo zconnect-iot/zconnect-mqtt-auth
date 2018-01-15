@@ -116,5 +116,5 @@ class VMQAuth(MQTTAuth):
         return False
 
     @property
-    def authenticated(self):
+    def authorized(self):
         return User.check_user_authed(self._username, self._password)
