@@ -11,6 +11,7 @@ def mongo_connect():
         mongo_settings = {
             "mongo_host": os.environ["MONGO_HOST"],
             "mongo_db": os.environ["MONGO_DATABASE"],
+            "connect": False,
         }
     except KeyError as e:
         raise KeyError("Missing environment key") from e
@@ -20,6 +21,8 @@ def mongo_connect():
         "ssl": "MONGO_SSL",
         "username": "MONGO_USERNAME",
         "password": "MONGO_PASSWORD",
+        "connect": "MONGO_CONNECT",
+        "appname": "MONGO_APPNAME",
     }
 
     for setting, envvar in extra_settings:
