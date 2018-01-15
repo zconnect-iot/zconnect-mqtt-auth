@@ -1,3 +1,11 @@
+"""Implements auth and management plugins for vernemq
+
+Connects to the vmq broker as well because it needs to publish management events
+to the broker when devices do certain things like registering
+
+http://vernemq.com/docs/plugindevelopment/
+"""
+
 import logging
 import string
 import random
@@ -23,8 +31,47 @@ class InvalidClientId(Exception):
     pass
 
 
+@app.route("/auth_on_register", methods=["POST"])
+def auth_on_register():
+    """Called immediately on a new connection
+
+    http://vernemq.com/docs/plugindevelopment/sessionlifecycle.html
+
+    Authorises against mongodb. vmq can't handle replicasets so do it here
+
+    .. code-block:: python
+
+        {
+            "peer_addr": "127.0.0.1",
+            "peer_port": 8888,
+            "username": "username",
+            "password": "password",
+            "mountpoint": "",
+            "client_id": "clientid",
+            "clean_session": false
+        }
+
+    """
+
+    pass
+
+
 @app.route('/on_register', methods=['POST'])
 def on_register():
+    """Called when it's registered, but after auth_on_register
+
+    This is used to actually handle any actions on registering
+
+    .. code-block:: python
+
+        {
+            "peer_addr": "127.0.0.1",
+            "peer_port": 8888,
+            "username": "username",
+            "mountpoint": "",
+            "client_id": "clientid"
+        }
+    """
     response = {
             "result": "next"
     }
