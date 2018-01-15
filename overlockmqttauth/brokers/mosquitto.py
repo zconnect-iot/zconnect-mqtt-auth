@@ -5,7 +5,7 @@ https://github.com/mbachry/mosquitto_pyauth#auxiliary-module
 """
 
 import logging
-
+import mosquitto_auth
 from .connections import parse_connection
 
 
