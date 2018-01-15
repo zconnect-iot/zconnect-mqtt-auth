@@ -16,7 +16,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 import paho.mqtt.client as mqtt
 
-from overlockmqttauth.auth.mongodb import mongo_connect
+from overlockmqttauth.auth.mongodb import mongo_connect, VMQAuth
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,9 @@ def auth_on_register():
 
     """
 
-    pass
+    as_json = request.json
+
+    logger.debug("auth_on_register: %s", as_json)
 
 
 @app.route('/on_register', methods=['POST'])
@@ -75,7 +77,7 @@ def on_register():
         }
     """
     response = {
-            "result": "next"
+        "result": "next"
     }
 
     client_id = request.json['client_id']

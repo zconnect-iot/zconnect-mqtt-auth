@@ -1,7 +1,16 @@
+import logging
+
+import bcrypt
 from mongoengine import Document, EmbeddedDocument, StringField, EmbeddedDocumentField
+import mongoengine
+
+from overlockmqttauth.auth.base import MQTTAuth
 
 
-class VMQACL(EmbeddedDocument):
+logger = logging.getLogger(__name__)
+
+
+class ACL(EmbeddedDocument):
     """Vernemq 'pattern' match
 
     Attributes:
@@ -12,7 +21,7 @@ class VMQACL(EmbeddedDocument):
     pattern = StringField()
 
 
-class VMQAuth(Document):
+class User(Document):
     """Vernemq ACL document
 
     Kept in the same format as vernemq so we don't have to change anything
@@ -40,5 +49,66 @@ class VMQAuth(Document):
     username = StringField()
     passhash = StringField()
 
-    publish_acl = EmbeddedDocumentField(VMQACL())
-    subscribe_acl = EmbeddedDocumentField(VMQACL())
+    publish_acl = EmbeddedDocumentField(ACL())
+    subscribe_acl = EmbeddedDocumentField(ACL())
+
+    @classmethod
+    def get_by_user(cls, username):
+        """Get one by username
+
+        Args:
+            username (str): username
+
+        Returns:
+            User: user in db
+
+        Raises:
+            DoesNotExist: No user found
+        """
+
+        try:
+            auth_doc = VMQAuth.objects(username=username).get()
+        except mongoengine.DoesNotExist:
+            logger.info("No user '%s' in the database")
+            return None
+
+        return auth_doc
+
+    @classmethod
+    def check_user_authed(cls, username, password):
+        """Try to get a user with the specified username from the database, then
+        make sure the password is correct
+
+        Todo:
+            Blacklisting - overlock stuff
+
+        Args:
+            username (str): username in db
+            password (str): plaintext password
+        """
+
+        user = cls.get_by_user(username)
+
+        if user is None:
+            return None
+
+        return user.password_matches(password)
+
+    def password_matches(self, password):
+        return bcrypt.checkpw(password, self.passhash)
+
+
+class VMQAuth(MQTTAuth):
+    """Interface to vernemq mongodb auth
+
+    Todo:
+        cache blacklists/authorized status
+    """
+
+    def blacklisted(self):
+        # TODO
+        # overlock stuff
+        return False
+
+    def authorized(self):
+        return User.check_user_authed(self._username, self._password)
