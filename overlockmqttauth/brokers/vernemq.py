@@ -23,7 +23,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-mqttc = mqtt.Client(client_id="controller", transport="websockets")
+mqttc = mqtt.Client(client_id="controller.{:s}".format(id_generator()), transport="websockets")
 app = Flask(__name__)
 
 
