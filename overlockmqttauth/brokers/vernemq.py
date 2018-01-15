@@ -47,6 +47,16 @@ def on_register():
 
 @app.route('/on_client_gone', methods=['POST'])
 def on_client_gone():
+    """Client gone
+
+    .. code-block:: python
+
+        {
+            "client_id": "clientid",
+            "mountpoint": ""
+        }
+    """
+
     response = {
             "result": "next"
     }
@@ -61,6 +71,16 @@ def on_client_gone():
 
 @app.route('/on_client_offline', methods=['POST'])
 def on_client_offline():
+    """Client offline
+
+    .. code-block:: python
+
+        {
+            "client_id": "clientid",
+            "mountpoint": ""
+        }
+    """
+
     response = {
             "result": "next"
     }
