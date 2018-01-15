@@ -16,6 +16,8 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 import paho.mqtt.client as mqtt
 
+from overlockmqttauth.auth.mongodb import mongo_connect
+
 logger = logging.getLogger(__name__)
 
 
@@ -284,7 +286,6 @@ def start_broker():
     logging.basicConfig(level=logging.INFO)
 
     # Not setting TLS or anything - this should only be internal
-
     mqttc.username_pw_set("controller", "controller123")
     mqttc.on_log = mqtt_log
     mqttc.on_connect = mqtt_connect
@@ -297,6 +298,9 @@ def start_broker():
     ))
     mqttc.loop_start()
     mqttc.connect_async(mqtt_host, mqtt_port, 60)
+
+    mongo_connect()
+
     app.run(
         host=os.getenv('HOOK_HOST', '0.0.0.0'),
         port=int(os.getenv('HOOK_PORT', 5000)),
