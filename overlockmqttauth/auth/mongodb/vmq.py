@@ -52,6 +52,10 @@ class User(Document):
     publish_acl = EmbeddedDocumentField(ACL())
     subscribe_acl = EmbeddedDocumentField(ACL())
 
+    meta = {
+        "collection": "vmq_acl",
+    }
+
     @classmethod
     def get_by_user(cls, username):
         """Get one by username
@@ -67,7 +71,7 @@ class User(Document):
         """
 
         try:
-            auth_doc = VMQAuth.objects(username=username).get()
+            auth_doc = User.objects(username=username).get()
         except mongoengine.DoesNotExist:
             logger.info("No user '%s' in the database")
             return None
@@ -105,10 +109,12 @@ class VMQAuth(MQTTAuth):
         cache blacklists/authenticated status
     """
 
+    @property
     def blacklisted(self):
         # TODO
         # overlock stuff
         return False
 
+    @property
     def authenticated(self):
         return User.check_user_authed(self._username, self._password)

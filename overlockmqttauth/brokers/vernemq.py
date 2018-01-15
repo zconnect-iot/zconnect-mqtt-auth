@@ -76,8 +76,8 @@ def auth_on_register():
             "result": "error"
         }
 
-    if not connection.authorized:
-        logger.info("User not authorized")
+    if not connection.authenticated:
+        logger.info("Could not find user with given username/pw")
 
         response = {
             "result": "error"

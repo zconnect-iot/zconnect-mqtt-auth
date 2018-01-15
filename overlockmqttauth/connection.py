@@ -1,12 +1,12 @@
 from .api import parse_connection
-from .auth import VMQAuth
+from .auth.mongodb import VMQAuth
 
 
 class MQTTConnection:
 
-    def __init__(self, username, password, client_id, api, auth):
-        self._api = api(username, password, client_id)
-        self._auth = auth(username, password, client_id)
+    def __init__(self, api, auth):
+        self._api = api
+        self._auth = auth
 
     def api_version(self):
         """which connection api this is using
