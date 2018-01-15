@@ -107,5 +107,7 @@ def get_connection(username, password, client_id, api_type=None, auth_type=None)
 
     if auth_type is None:
         auth = VMQAuth(username, password, client_id)
+        from overlockmqttauth.auth.mongodb.util import mongo_connect
+        mongo_connect()
 
     return MQTTConnection(api, auth)

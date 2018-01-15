@@ -327,8 +327,6 @@ def start_broker():
     mqttc.loop_start()
     mqttc.connect_async(mqtt_host, mqtt_port, 60)
 
-    mongo_connect()
-
     app.run(
         host=os.getenv('HOOK_HOST', '0.0.0.0'),
         port=int(os.getenv('HOOK_PORT', 5000)),
