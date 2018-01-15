@@ -21,11 +21,15 @@ class VMQAuth(Document):
 
     These fields are used at different points in the 'auth' flow
 
+    Note:
+
+        currently bcrypt version 2a (prefix $2a$) is supported.
+
     Attributes:
 
         mountpoint (str): ???
         client_id (str): mqtt client_id
-        username (str): mqtt usernam
+        username (str): mqtt username
         passhash (str): bcrypt hash of password
         publish_acl (list(dict)): list of ACL matches for publishing
         subscribe_acl (list(dict)): list of ACL matches for subscribing
