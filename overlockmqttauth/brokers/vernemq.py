@@ -213,8 +213,10 @@ def mqtt_message(client, userdata, msg):
     logger.debug(msg.topic+" "+str(msg.payload))
 
 
-if __name__ == "__main__":
+def start_broker():
     logging.basicConfig(level=logging.INFO)
+
+    # Not setting TLS or anything - this should only be internal
 
     mqttc.username_pw_set("controller", "controller123")
     mqttc.on_log = mqtt_log
