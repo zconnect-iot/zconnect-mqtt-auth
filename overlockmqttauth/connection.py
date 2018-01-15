@@ -34,18 +34,42 @@ class MQTTConnection:
 
         return self._auth.blacklisted
 
-    def authorized(self):
-        """Whether this connection is valid
+    def authenticated(self):
+        """Whether this connection is by a valid user
 
         For it to be valid:
         - not blacklisted
         - in the project or device secrets (depending on secret type)
 
         Returns:
-            bool: if this connection 'method' is valid
+            bool: if the user is authenticated
         """
         
-        return self._auth.authorized
+        return self._auth.authenticated
+
+    def subscribe_authorized(self, topic):
+        """Whether the user is allowed to subscribe to this topic
+
+        Args:
+            topic (str): topic to subsribe to
+
+        Returns:
+            bool: If the user is allowed to subcribe
+        """
+        # TODO
+        raise NotImplementedError
+
+    def publush_authorized(self, topic):
+        """Whether the user is allowed to publish to this topic
+
+        Args:
+            topic (str): topic to publish to
+
+        Returns:
+            bool: If the user is allowed to publish to this topic
+        """
+        # TODO
+        raise NotImplementedError
 
     def project_id(self):
         """Which project this connection corresponds to

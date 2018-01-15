@@ -102,7 +102,7 @@ class VMQAuth(MQTTAuth):
     """Interface to vernemq mongodb auth
 
     Todo:
-        cache blacklists/authorized status
+        cache blacklists/authenticated status
     """
 
     def blacklisted(self):
@@ -110,5 +110,5 @@ class VMQAuth(MQTTAuth):
         # overlock stuff
         return False
 
-    def authorized(self):
+    def authenticated(self):
         return User.check_user_authed(self._username, self._password)

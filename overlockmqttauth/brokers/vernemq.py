@@ -16,7 +16,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 import paho.mqtt.client as mqtt
 
-from overlockmqttauth.auth.mongodb import mongo_connect, VMQAuth
+from overlockmqttauth.connection import get_connection
 
 logger = logging.getLogger(__name__)
 
