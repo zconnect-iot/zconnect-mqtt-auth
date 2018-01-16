@@ -49,8 +49,8 @@ class User(Document):
     username = StringField()
     passhash = StringField()
 
-    publish_acl = EmbeddedDocumentField(ACL())
-    subscribe_acl = EmbeddedDocumentField(ACL())
+    publish_acl = EmbeddedDocumentField(ACL)
+    subscribe_acl = EmbeddedDocumentField(ACL)
 
     meta = {
         "collection": "vmq_acl",

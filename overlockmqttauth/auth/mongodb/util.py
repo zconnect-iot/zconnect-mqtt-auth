@@ -9,15 +9,14 @@ def mongo_connect():
     """
     try:
         mongo_settings = {
-            "mongo_host": os.environ["MONGO_HOST"],
-            "mongo_db": os.environ["MONGO_DATABASE"],
+            "host": os.environ["MONGO_HOST"],
+            "db": os.environ["MONGO_DATABASE"],
             "connect": False,
         }
     except KeyError as e:
         raise KeyError("Missing environment key") from e
 
     extra_settings = {
-        "port": "MONGO_PORT",
         "ssl": "MONGO_SSL",
         "username": "MONGO_USERNAME",
         "password": "MONGO_PASSWORD",
@@ -25,10 +24,16 @@ def mongo_connect():
         "appname": "MONGO_APPNAME",
     }
 
-    for setting, envvar in extra_settings:
+    for setting, envvar in extra_settings.items():
         try:
             mongo_settings.update(**{setting: os.environ[envvar]})
         except KeyError:
             pass
+
+    # Has to be an int
+    try:
+        mongo_settings.update(port=int(os.environ["MONGO_PORT"]))
+    except KeyError:
+        pass
 
     mongoengine.connect(**mongo_settings)
