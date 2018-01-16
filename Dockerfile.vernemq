@@ -1,4 +1,4 @@
-FROM michaelboulton/python-package-build:3.5-alpine
+FROM michaelboulton/python-package-build:3.5-alpine as builder
 
 # otherwise entry points don't work
 RUN pip3 install --upgrade pip setuptools
@@ -7,15 +7,10 @@ RUN pip3 install --upgrade pip setuptools
 # RUN pip3 install --upgrade uwsgi cryptography
 
 # Then install this actual package to expose entry points
-# NOTE
-# Copying folders like this only works with ROCKER. Trying to use docker to copy
-# something like this will just copy the contents of the folder. why? who knows
-COPY MANIFEST.in setup.py setup.cfg overlockmqttauth /tmp/main/
+COPY MANIFEST.in setup.py setup.cfg /tmp/main/
+COPY overlockmqttauth/ /tmp/main/overlockmqttauth/
 WORKDIR /tmp/main
 RUN pip3 install .[vernemq] && rm -rf .eggs
-
-# export it for later
-EXPORT /usr/local/ local-python/
 
 
 # build again, only use things that we need
@@ -27,7 +22,7 @@ RUN apk add --no-cache --virtual .fetch-deps \
   pcre \
   && rm -rf /var/cache/apk/*
 
-IMPORT local-python/ /usr/local/
+COPY --from=builder /usr/local/ /usr/local/
 
 ENV MONGO_HOST=mongodb
 ENV MONGO_DATABASE=vmq_acl
@@ -42,4 +37,4 @@ ENV MONGO_SSL=false
 
 CMD ["vmq_hook"]
 
-TAG vernemq_authhooks
+# TAG vernemq_authhooks
