@@ -1,0 +1,45 @@
+FROM michaelboulton/python-package-build:3.5-alpine
+
+# otherwise entry points don't work
+RUN pip3 install --upgrade pip setuptools
+
+# Speeds up cached building
+# RUN pip3 install --upgrade uwsgi cryptography
+
+# Then install this actual package to expose entry points
+# NOTE
+# Copying folders like this only works with ROCKER. Trying to use docker to copy
+# something like this will just copy the contents of the folder. why? who knows
+COPY MANIFEST.in setup.py setup.cfg overlockmqttauth /tmp/main/
+WORKDIR /tmp/main
+RUN pip3 install .[vernemq] && rm -rf .eggs
+
+# export it for later
+EXPORT /usr/local/ local-python/
+
+
+# build again, only use things that we need
+FROM python:3.5-alpine
+
+RUN apk add --no-cache --virtual .fetch-deps \
+  libffi \
+  openssl \
+  pcre \
+  && rm -rf /var/cache/apk/*
+
+IMPORT local-python/ /usr/local/
+
+ENV MONGO_HOST=mongodb
+ENV MONGO_DATABASE=vmq_acl
+
+# turns out you can't have black env vars in dockerfiles
+# ENV MONGO_USERNAME
+# ENV MONGO_PASSWORD
+ENV MONGO_APPNAME=vmq_hook
+
+ENV MONGO_PORT=27017
+ENV MONGO_SSL=false
+
+CMD ["vmq_hook"]
+
+TAG vernemq_authhooks
