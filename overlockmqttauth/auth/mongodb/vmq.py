@@ -100,7 +100,9 @@ class MQTTUser(Document):
         return user.password_matches(password)
 
     def password_matches(self, password):
-        return bcrypt.checkpw(password, self.passhash)
+        match = bcrypt.checkpw(password, self.passhash)
+        logger.debug("Password matches: %s", match)
+        return match
 
 
 class VMQAuth(MQTTAuth):

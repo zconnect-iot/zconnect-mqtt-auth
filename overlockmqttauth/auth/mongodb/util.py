@@ -1,5 +1,9 @@
+import logging
 import os
 import mongoengine
+
+
+logger = logging.getLogger(__name__)
 
 
 def mongo_connect():
@@ -35,5 +39,7 @@ def mongo_connect():
         mongo_settings.update(port=int(os.environ["MONGO_PORT"]))
     except KeyError:
         pass
+
+    logger.info("Connecting to %s on %s", mongo_settings["db"], mongo_settings["host"])
 
     mongoengine.connect(**mongo_settings)
