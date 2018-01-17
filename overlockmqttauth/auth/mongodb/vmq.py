@@ -52,6 +52,11 @@ class MQTTUser(Document):
     publish_acl = EmbeddedDocumentField(ACL)
     subscribe_acl = EmbeddedDocumentField(ACL)
 
+    # Just specify it here so we know what it is for seeding etc.
+    meta = {
+        "collection": "mqtt_user",
+    }
+
     @classmethod
     def get_by_user(cls, username):
         """Get one by username
