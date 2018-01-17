@@ -21,7 +21,7 @@ class ACL(EmbeddedDocument):
     pattern = StringField()
 
 
-class User(Document):
+class MQTTUser(Document):
     """Vernemq ACL document
 
     Kept in the same format as vernemq so we don't have to change anything
@@ -52,10 +52,6 @@ class User(Document):
     publish_acl = EmbeddedDocumentField(ACL)
     subscribe_acl = EmbeddedDocumentField(ACL)
 
-    meta = {
-        "collection": "vmq_acl",
-    }
-
     @classmethod
     def get_by_user(cls, username):
         """Get one by username
@@ -64,14 +60,14 @@ class User(Document):
             username (str): username
 
         Returns:
-            User: user in db
+            MQTTUser: user in db
 
         Raises:
             DoesNotExist: No user found
         """
 
         try:
-            auth_doc = User.objects(username=username).get()
+            auth_doc = MQTTUser.objects(username=username).get()
         except mongoengine.DoesNotExist:
             logger.info("No user '%s' in the database")
             return None
@@ -117,4 +113,4 @@ class VMQAuth(MQTTAuth):
 
     @property
     def authorized(self):
-        return User.check_user_authed(self._username, self._password)
+        return MQTTUser.check_user_authed(self._username, self._password)
