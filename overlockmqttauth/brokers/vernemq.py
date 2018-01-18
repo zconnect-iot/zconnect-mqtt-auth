@@ -39,7 +39,7 @@ def _get_regex(topic_type):
             :(?P<product_name>\w+)      # name of product (same as device type?)
             :(?P<client_node_id>\w+)    # 'device id'
         )
-        /{0:s}/(?P<event>)                # type of event?
+        /{0:s}/(?P<event>)              # type of event?
         /fmt/json
     $
     """.format(topic_type), re.VERBOSE)
@@ -124,6 +124,31 @@ def auth_on_publish():
 			"retain": false
 		}
     """
+
+    as_json = request.json
+
+    try:
+        match = PUB_ACL_REGEX.match(as_json["topic"])
+    except KeyError:
+        response = {
+            "result": {
+                "error": "no topic in payload",
+            }
+        }
+    else:
+        # needs to match, NOT search
+        if not match:
+            response = {
+                "result": {
+                    "error": "Topic did not match regex",
+                }
+            }
+        else:
+            response = {
+                "result": "next",
+            }
+
+    return jsonify(response)
 
 
 @app.route('/on_register', methods=['POST'])
