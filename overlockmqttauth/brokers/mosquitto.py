@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """Functions defined as described in https://github.com/mbachry/mosquitto_pyauth
 
 Could also use these functions in future:

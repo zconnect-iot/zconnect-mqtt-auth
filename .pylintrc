@@ -1,7 +1,7 @@
 [MASTER]
 disable=missing-docstring,bad-continuation,fixme,invalid-name,line-too-long,too-few-public-methods,no-else-return,too-many-branches,R
 
-ignore=tests,overlockmqttauth/brokers
+ignore=tests
 
 [REPORTS]
 reports=no

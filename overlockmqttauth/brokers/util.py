@@ -81,7 +81,7 @@ def exit_handler(_request, dropped):
         return
 
     try:
-        org, device_type, device_id = client_id_to_org_type_id(client_id)
+        _, device_type, device_id = client_id_to_org_type_id(client_id)
     except InvalidClientId:
         logger.warning("Invalid Client Id: %s", client_id)
         return
@@ -105,7 +105,7 @@ def enter_handler(_request):
         return
 
     try:
-        org, device_type, device_id = client_id_to_org_type_id(client_id)
+        _, device_type, device_id = client_id_to_org_type_id(client_id)
     except InvalidClientId:
         logger.warning("Invalid Client Id: %s", client_id)
         return
@@ -140,7 +140,7 @@ def client_id_to_org_type_id(client_id):
 # will have to query datbase at some point
 
 def _get_regex(topic_type):
-    return re.compile("""
+    return re.compile(r"""
     ^
         /iot-2
         /type/(?P<message_type>[^/]+)   # device type

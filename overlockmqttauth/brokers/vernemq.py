@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """Implements auth and management plugins for vernemq
 
 Connects to the vmq broker as well because it needs to publish management events
