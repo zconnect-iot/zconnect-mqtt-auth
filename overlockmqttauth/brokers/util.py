@@ -140,6 +140,12 @@ def client_id_to_org_type_id(client_id):
 # will have to query datbase at some point
 
 def _get_regex(topic_type):
+    """get regex that matches a topic type
+
+    Example:
+
+        /iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/evt/boom/fmt/json
+    """
     return re.compile(r"""
     ^
         /iot-2
