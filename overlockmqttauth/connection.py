@@ -56,10 +56,10 @@ class MQTTConnection:
         Returns:
             bool: If the user is allowed to subcribe
         """
-        # TODO
-        raise NotImplementedError
 
-    def publush_authorized(self, topic):
+        return self._api.subscribe_authorized(topic)
+
+    def publish_authorized(self, topic):
         """Whether the user is allowed to publish to this topic
 
         Args:
@@ -68,8 +68,8 @@ class MQTTConnection:
         Returns:
             bool: If the user is allowed to publish to this topic
         """
-        # TODO
-        raise NotImplementedError
+
+        return self._api.publish_authorized(topic)
 
     def project_id(self):
         """Which project this connection corresponds to

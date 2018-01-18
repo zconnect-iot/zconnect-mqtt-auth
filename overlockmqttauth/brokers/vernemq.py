@@ -8,7 +8,6 @@ http://vernemq.com/docs/plugindevelopment/
 
 import logging
 import os
-import re
 
 from flask import Flask, request, jsonify
 
@@ -18,6 +17,8 @@ from .util import (InvalidClientId,
         exit_handler,
         enter_handler,
         client_id_to_org_type_id,
+        can_publish,
+        can_subscribe,
     )
 from overlockmqttauth.client import client as mqttc
 
@@ -26,27 +27,6 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 mongo_connect()
-
-
-def _get_regex(topic_type):
-    return re.compile("""
-    ^
-        /iot-2
-        /type/(?P<message_type>[^/]+)   # device type
-        /id/(?P<auto_id>                # full identifier for this device
-            (?P<api_ver>v[0-9])         # api version - v1, v2, etc
-            :(?P<project_id>\w+)        # project id
-            :(?P<product_name>\w+)      # name of product (same as device type?)
-            :(?P<client_node_id>\w+)    # 'device id'
-        )
-        /{0:s}/(?P<event>)              # type of event?
-        /fmt/json
-    $
-    """.format(topic_type), re.VERBOSE)
-
-
-PUB_ACL_REGEX = _get_regex("evt")
-SUB_ACL_REGEX = _get_regex("cmd")
 
 
 @app.route("/auth_on_register", methods=["POST"])
@@ -127,26 +107,37 @@ def auth_on_publish():
 
     as_json = request.json
 
-    try:
-        match = PUB_ACL_REGEX.match(as_json["topic"])
-    except KeyError:
-        response = {
-            "result": {
-                "error": "no topic in payload",
-            }
+    response = can_publish(as_json)
+
+    return jsonify(response)
+
+
+@app.route('/auth_on_subscribe', methods=['POST'])
+def auth_on_subscribe():
+    """Restricts access to subscribing to topics
+
+    Devices should only be able to subscribe to the 'command' topic for that
+    project, not the 'event' topic
+
+    > Note, in the example below the payload is not base64 encoded which is not
+    > the default.
+
+    .. code-block:: python
+
+        {
+            "username": "username",
+            "client_id": "clientid",
+            "mountpoint": "",
+            "qos": 1,
+            "topic": "a/b",
+            "payload": "hello",
+            "retain": false
         }
-    else:
-        # needs to match, NOT search
-        if not match:
-            response = {
-                "result": {
-                    "error": "Topic did not match regex",
-                }
-            }
-        else:
-            response = {
-                "result": "next",
-            }
+    """
+
+    as_json = request.json
+
+    response = can_subscribe(as_json)
 
     return jsonify(response)
 

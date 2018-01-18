@@ -1,4 +1,5 @@
 import logging
+import re
 import json
 from datetime import datetime
 from overlockmqttauth.client import client as mqttc
@@ -132,3 +133,77 @@ def client_id_to_org_type_id(client_id):
     device_id = split[3]
 
     return (org, device_type, device_id)
+
+
+# TODO
+# move this stuff into API or something
+
+def _get_regex(topic_type):
+    return re.compile("""
+    ^
+        /iot-2
+        /type/(?P<message_type>[^/]+)   # device type
+        /id/(?P<auto_id>                # full identifier for this device
+            (?P<api_ver>v[0-9])         # api version - v1, v2, etc
+            :(?P<project_id>\w+)        # project id
+            :(?P<product_name>\w+)      # name of product (same as device type?)
+            :(?P<client_node_id>\w+)    # 'device id'
+        )
+        /{0:s}/(?P<event>)              # type of event?
+        /fmt/json
+    $
+    """.format(topic_type), re.VERBOSE)
+
+
+PUB_ACL_REGEX = _get_regex("evt")
+SUB_ACL_REGEX = _get_regex("cmd")
+
+
+def _matches(regex, payload):
+    def _err(msg):
+        return {
+            "result": {
+                "error": msg,
+            }
+        }
+
+    try:
+        match = regex.match(payload["topic"])
+    except KeyError:
+        return _err("no topic in payload")
+
+    # needs to match, NOT search
+    if not match:
+        return _err("Topic did not match regex")
+
+    response = {
+        "result": "next",
+    }
+
+    return response
+
+
+def can_publish(payload):
+    """whether this publish event is allowed
+
+    Args:
+        payload (dict): json payload from vernemq
+
+    Returns:
+        dict: response to vernemq
+    """
+
+    return _matches(PUB_ACL_REGEX, payload)
+
+
+def can_subscribe(payload):
+    """whether this subscribe event is allowed
+
+    Args:
+        payload (dict): json payload from vernemq
+
+    Returns:
+        dict: response to vernemq
+    """
+
+    return _matches(SUB_ACL_REGEX, payload)
