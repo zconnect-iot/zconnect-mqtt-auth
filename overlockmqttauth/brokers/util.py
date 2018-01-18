@@ -137,6 +137,7 @@ def client_id_to_org_type_id(client_id):
 
 # TODO
 # move this stuff into API or something
+# will have to query datbase at some point
 
 def _get_regex(topic_type):
     return re.compile("""
@@ -174,6 +175,9 @@ def _matches(regex, payload):
 
     # needs to match, NOT search
     if not match:
+        # TODO
+        # this will reject on anything that's wrong - should probably change the
+        # regex so it can type 'evt' or 'cmd' then manually check afterwards
         return _err("Topic did not match regex")
 
     response = {
