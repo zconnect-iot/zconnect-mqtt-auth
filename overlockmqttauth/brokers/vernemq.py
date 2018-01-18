@@ -28,19 +28,25 @@ app = Flask(__name__)
 mongo_connect()
 
 
-PROJECT_PUB_REGEX = re.compile("""
+def _get_regex(topic_type):
+    return re.compile("""
     ^
-    /iot-2
-    /type/(?P<message_type>[^/]+)   # device type
-    /id/(?P<auto_id>                # full identifier for this device
-        (?P<api_ver>v[0-9])         # api version - v1, v2, etc
-        :(?P<project_id>\w+)        # project id
-        :(?P<product_name>\w+)      # name of product (same as device type?)
-        :(?P<client_node_id>\w+)    # 'device id'
-    )
-    /evt/(?P<event>)                # type of event?
-    /fmt/json
-    $""", re.VERBOSE)
+        /iot-2
+        /type/(?P<message_type>[^/]+)   # device type
+        /id/(?P<auto_id>                # full identifier for this device
+            (?P<api_ver>v[0-9])         # api version - v1, v2, etc
+            :(?P<project_id>\w+)        # project id
+            :(?P<product_name>\w+)      # name of product (same as device type?)
+            :(?P<client_node_id>\w+)    # 'device id'
+        )
+        /{0:s}/(?P<event>)                # type of event?
+        /fmt/json
+    $
+    """.format(topic_type), re.VERBOSE)
+
+
+PUB_ACL_REGEX = _get_regex("evt")
+SUB_ACL_REGEX = _get_regex("cmd")
 
 
 @app.route("/auth_on_register", methods=["POST"])
