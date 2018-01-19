@@ -187,7 +187,7 @@ def _matches(regex, payload):
         return _err("Topic did not match regex")
 
     response = {
-        "result": "next",
+        "result": "ok",
     }
 
     return response

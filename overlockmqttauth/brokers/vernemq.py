@@ -63,7 +63,7 @@ def auth_on_register():
     )
 
     response = {
-        "result": "next"
+        "result": "ok"
     }
 
     if not connection.authenticated:
