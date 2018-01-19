@@ -11,7 +11,7 @@ class V1API(MQTTAPIVer):
         # self.client_id = client_id
 
         (self._secret_type, self._secret) = password.split(":")
-        (api_ver, self._project_id, self._device_id) = user.split(":")
+        (api_ver, self._project_id, self._product_name, self._device_id) = user.split(":")
 
         assert api_ver == "v1"
 
