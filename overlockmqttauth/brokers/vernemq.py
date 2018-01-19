@@ -56,28 +56,39 @@ def auth_on_register():
 
     logger.debug("auth_on_register: %s", as_json)
 
-    connection = get_connection(
-        as_json["username"],
-        as_json["password"],
-        as_json["client_id"],
-    )
-
     response = {
         "result": "ok"
     }
 
-    if not connection.authenticated:
-        logger.info("Could not find user with given username/pw")
+    try:
+        connection = get_connection(
+            as_json["username"],
+            as_json["password"],
+            as_json["client_id"],
+        )
+    except Exception:
+        logger.exception("error parsing connection")
+
+        logger.critical("letting through - FIXME")
+        return jsonify(response)
 
         response = {
             "result": "error"
         }
-    elif connection.blacklisted:
-        logger.info("User has been blacklisted")
 
-        response = {
-            "result": "error"
-        }
+    else:
+        if not connection.authenticated:
+            logger.info("Could not find user with given username/pw")
+
+            response = {
+                "result": "error"
+            }
+        elif connection.blacklisted:
+            logger.info("User has been blacklisted")
+
+            response = {
+                "result": "error"
+            }
 
     return jsonify(response)
 
