@@ -219,4 +219,5 @@ def can_subscribe(payload):
         dict: response to vernemq
     """
 
-    return _matches(SUB_ACL_REGEX, payload)
+    for sub in payload["topics"]:
+        return _matches(SUB_ACL_REGEX, sub)

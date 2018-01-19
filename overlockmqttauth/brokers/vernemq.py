@@ -92,17 +92,41 @@ def auth_on_publish():
     > Note, in the example below the payload is not base64 encoded which is not
     > the default.
 
-    .. code-block:: python
+    Note:
 
-		{
-			"username": "username",
-			"client_id": "clientid",
-			"mountpoint": "",
-			"qos": 1,
-			"topic": "a/b",
-			"payload": "hello",
-			"retain": false
-		}
+        In the documentation, it says this is the payload:
+
+            .. code-block:: python
+
+                {
+                    "username": "username",
+                    "client_id": "clientid",
+                    "mountpoint": "",
+                    "qos": 1,
+                    "topic": "a/b",
+                    "payload": "hello",
+                    "retain": false
+                }
+
+        But ACTUALLY it's this:
+
+            .. code-block:: python
+
+                {
+                    "username": "username",
+                    "client_id": "clientid",
+                    "mountpoint": "",
+                    "topics": [
+                        {
+                            "qos": 1,
+                            "topic": "a/b",
+                        },
+                        {
+                            "qos": 0,
+                            "topic": "c/d",
+                        }
+                    ],
+                }
     """
 
     as_json = request.json
@@ -116,23 +140,7 @@ def auth_on_publish():
 def auth_on_subscribe():
     """Restricts access to subscribing to topics
 
-    Devices should only be able to subscribe to the 'command' topic for that
-    project, not the 'event' topic
-
-    > Note, in the example below the payload is not base64 encoded which is not
-    > the default.
-
-    .. code-block:: python
-
-        {
-            "username": "username",
-            "client_id": "clientid",
-            "mountpoint": "",
-            "qos": 1,
-            "topic": "a/b",
-            "payload": "hello",
-            "retain": false
-        }
+    the rest is as above
     """
 
     as_json = request.json
