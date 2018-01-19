@@ -178,7 +178,7 @@ def _matches(regex, payload):
     try:
         match = regex.match(payload["topic"])
     except KeyError:
-        return _err("no topic in payload")
+        return _err("no topic in payload ({})".format(payload))
 
     # needs to match, NOT search
     if not match:
