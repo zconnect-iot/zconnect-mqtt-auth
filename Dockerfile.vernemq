@@ -6,10 +6,13 @@ RUN pip3 install --upgrade pip setuptools
 # Speeds up cached building
 # RUN pip3 install --upgrade uwsgi cryptography
 
+WORKDIR /tmp/main
+COPY requirements.txt /tmp/main
+RUN pip install -r requirements.txt
+
 # Then install this actual package to expose entry points
 COPY MANIFEST.in setup.py setup.cfg /tmp/main/
 COPY overlockmqttauth/ /tmp/main/overlockmqttauth/
-WORKDIR /tmp/main
 RUN pip3 install .[vernemq] && rm -rf .eggs
 
 
