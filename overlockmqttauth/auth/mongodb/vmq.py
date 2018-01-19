@@ -133,7 +133,7 @@ class VMQAuth(MQTTAuth):
         #     logger.error("No user with name - checking project")
 
         try:
-            project = Project.objects(name=self._project_id).get()
+            project = Project.objects(id=self._project_id).get()
         except mongoengine.DoesNotExist:
             logger.exception("No project with name '%s'", self._project_id)
             return False
