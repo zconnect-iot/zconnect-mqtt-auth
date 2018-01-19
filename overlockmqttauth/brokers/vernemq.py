@@ -67,15 +67,14 @@ def auth_on_register():
         "result": "next"
     }
 
-    if connection.blacklisted:
-        logger.info("User has been blacklisted")
+    if not connection.authenticated:
+        logger.info("Could not find user with given username/pw")
 
         response = {
             "result": "error"
         }
-
-    if not connection.authenticated:
-        logger.info("Could not find user with given username/pw")
+    elif connection.blacklisted:
+        logger.info("User has been blacklisted")
 
         response = {
             "result": "error"
