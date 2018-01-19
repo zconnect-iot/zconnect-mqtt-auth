@@ -147,7 +147,7 @@ class VMQAuth(MQTTAuth):
             logger.exception("Badly formed secret (%s)", self._secret)
             return False
 
-        if as_uuid not in project.project_keys:
+        if not ((as_uuid in project.project_keys) or (self._secret in project.project_keys)):
             logger.error("Given secret (%s) not in project keys (%s)",
                 self._secret, project.project_keys)
             return False
