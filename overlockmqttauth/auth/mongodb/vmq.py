@@ -144,7 +144,7 @@ class VMQAuth(MQTTAuth):
         try:
             as_uuid = uuid.UUID(self._secret)
         except ValueError:
-            logger.exception("Badly formed secret")
+            logger.exception("Badly formed secret (%s)", self._secret)
             return False
 
         if as_uuid not in project.project_keys:
