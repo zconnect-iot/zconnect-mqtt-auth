@@ -168,6 +168,7 @@ SUB_ACL_REGEX = _get_regex("cmd")
 
 def _matches(regex, payload):
     def _err(msg):
+        logger.error(msg)
         return {
             "result": {
                 "error": msg,
@@ -189,6 +190,8 @@ def _matches(regex, payload):
     response = {
         "result": "ok",
     }
+
+    logger.info("Success")
 
     return response
 
