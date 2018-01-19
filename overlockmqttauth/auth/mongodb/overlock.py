@@ -7,4 +7,4 @@ class Product(mongoengine.Document):
 
 class Project(mongoengine.Document):
     name = mongoengine.StringField(required=True)
-    project_keys = mongoengine.ListField(mongoengine.UUIDField())
+    project_keys = mongoengine.ListField(mongoengine.StringField())

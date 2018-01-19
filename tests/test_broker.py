@@ -45,7 +45,7 @@ class TestAuthRegisterByProject:
         Project.objects().delete()
         p = Project(
             name="pid123",
-            project_keys=[uuid.uuid4()],
+            project_keys=["p:{}".format(uuid.uuid4())],
         )
         p.save()
 
@@ -68,7 +68,7 @@ class TestAuthRegisterByProject:
         Project.objects().delete()
         p = Project(
             name="pid123",
-            project_keys=[uuid.uuid4()],
+            project_keys=["p:{}".format(uuid.uuid4())],
         )
         p.save()
 
@@ -76,13 +76,13 @@ class TestAuthRegisterByProject:
             "/auth_on_register",
             data=json.dumps({
                 "username": "v1:pid123:aircon:0xbeef",
-                "password": "p:{}".format(str(p.project_keys[0])),
+                "password": p.project_keys[0],
                 "client_id": "2of3opf23",
             }),
             content_type="application/json",
         )
 
-        assert {"result": "next"} == _getjson(response)
+        assert {"result": "ok"} == _getjson(response)
         assert response._status_code == 200
 
 
@@ -114,7 +114,7 @@ class TestAuthRegisterByUser:
             content_type="application/json",
         )
 
-        assert {"result": "next"} == _getjson(response)
+        assert {"result": "ok"} == _getjson(response)
         assert response._status_code == 200
 
     def test_not_authed(self, test_client):
@@ -146,7 +146,7 @@ class TestAuthPublish:
             content_type="application/json",
         )
 
-        assert {"result": "next"} == _getjson(response)
+        assert {"result": "ok"} == _getjson(response)
         assert response._status_code == 200
 
     def test_cant_publish_cmd(self, test_client):
@@ -174,12 +174,16 @@ class TestAuthSubscribe:
                 "username": "v1:pid123:aircon:0xbeef",
                 "password": "p:abc",
                 "client_id": "2of3opf23",
-                "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/cmd/boom/fmt/json",
+                "topics": [
+                    {
+                        "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/cmd/boom/fmt/json",
+                    },
+                ],
             }),
             content_type="application/json",
         )
 
-        assert {"result": "next"} == _getjson(response)
+        assert {"result": "ok"} == _getjson(response)
         assert response._status_code == 200
 
     def test_cant_subscribe_evt(self, test_client):
@@ -189,7 +193,11 @@ class TestAuthSubscribe:
                 "username": "v1:pid123:aircon:0xbeef",
                 "password": "p:abc",
                 "client_id": "2of3opf23",
-                "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/evt/boom/fmt/json",
+                "topics": [
+                    {
+                        "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/evt/boom/fmt/json",
+                    },
+                ]
             }),
             content_type="application/json",
         )

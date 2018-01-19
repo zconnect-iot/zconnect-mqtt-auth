@@ -1,5 +1,4 @@
 import logging
-import uuid
 
 import bcrypt
 from mongoengine import Document, EmbeddedDocument, StringField, EmbeddedDocumentField
@@ -141,15 +140,10 @@ class VMQAuth(MQTTAuth):
 
         logger.debug("Got project - checking key")
 
-        try:
-            as_uuid = uuid.UUID(self._secret)
-        except ValueError:
-            logger.exception("Badly formed secret (%s)", self._secret)
-            return False
-
-        if not ((as_uuid in project.project_keys) or (self._secret in project.project_keys)):
-            logger.error("Given secret (%s) not in project keys (%s)",
-                self._secret, project.project_keys)
+        # Whole password is stored in database, including 'p:' prefix
+        if not self._password in project.project_keys:
+            logger.error("Given password (%s) not in project keys (%s)",
+                self._password, project.project_keys)
             return False
 
         # TODO
