@@ -11,4 +11,4 @@ min-similarity-lines=6
 ignore-imports=yes
 
 [TYPECHECK]
-ignored-classes=MQTTUser,StringField
+ignored-classes=MQTTUser,StringField,Product,Project

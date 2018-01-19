@@ -5,8 +5,11 @@ class MQTTAuth(metaclass=ABCMeta):
 
     def __init__(self, username, password, client_id):
         self._username = username
+        (_, self._project_id, self._product_name, self._device_id) = username.split(":")
+
         # FIXME
-        _, self._password = password.split(":")
+        self._secret_type, self._secret = password.split(":")
+
         self._client_id = client_id
 
     @abstractproperty

@@ -1,10 +1,14 @@
 import logging
+import uuid
 
 import bcrypt
 from mongoengine import Document, EmbeddedDocument, StringField, EmbeddedDocumentField
 import mongoengine
 
 from overlockmqttauth.auth.base import MQTTAuth
+
+# FIXME fix imports
+from .overlock import Project
 
 
 logger = logging.getLogger(__name__)
@@ -95,7 +99,7 @@ class MQTTUser(Document):
         user = cls.get_by_user(username)
 
         if user is None:
-            return None
+            return False
 
         return user.password_matches(password)
 
@@ -120,4 +124,38 @@ class VMQAuth(MQTTAuth):
 
     @property
     def authenticated(self):
-        return MQTTUser.check_user_authed(self._username, self._password)
+        # FIXME
+        # This should be moved to pub/sub checkers + create Product/Project afterwards
+        # user = MQTTUser.get_by_user(self._username)
+
+        # if user is not None:
+        #     return user.password_matches(self._secret)
+        # else:
+        #     logger.error("No user with name - checking project")
+
+        try:
+            project = Project.objects(name=self._project_id).get()
+        except mongoengine.DoesNotExist:
+            logger.exception("No project with name '%s'", self._project_id)
+            return False
+
+        logger.debug("Got project - checking key")
+
+        try:
+            as_uuid = uuid.UUID(self._secret)
+        except ValueError:
+            logger.exception("Badly formed secret")
+            return False
+
+        if as_uuid not in project.project_keys:
+            logger.error("Given secret (%s) not in project keys (%s)",
+                self._secret, project.project_keys)
+            return False
+
+        # TODO
+        # check blacklist
+
+        # TODO
+        # check hash (client id) matches other credentials
+
+        return True
