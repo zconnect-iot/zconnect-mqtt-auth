@@ -1,5 +1,9 @@
+import logging
 from .api import parse_connection
 from .auth.mongodb import VMQAuth
+
+
+logger = logging.getLogger(__name__)
 
 
 class MQTTConnection:
@@ -8,6 +12,7 @@ class MQTTConnection:
         self._api = api
         self._auth = auth
 
+    @property
     def api_version(self):
         """which connection api this is using
 
@@ -17,6 +22,7 @@ class MQTTConnection:
 
         return self._api.version
 
+    @property
     def blacklisted(self):
         """Whether this connection has been blacklisted
 
@@ -34,6 +40,7 @@ class MQTTConnection:
 
         return self._auth.blacklisted
 
+    @property
     def authenticated(self):
         """Whether this connection is by a valid user
 
@@ -71,6 +78,7 @@ class MQTTConnection:
 
         return self._api.publish_authorized(topic)
 
+    @property
     def project_id(self):
         """Which project this connection corresponds to
 
@@ -80,6 +88,7 @@ class MQTTConnection:
 
         return self._api.project_id
 
+    @property
     def device_id(self):
         """Device id of connection
 
@@ -89,6 +98,7 @@ class MQTTConnection:
 
         return self._api.device_id
 
+    @property
     def secret_type(self):
         """Type of secret used to authenticate
 
@@ -105,7 +115,11 @@ def get_connection(username, password, client_id, api_type=None, auth_type=None)
     if api_type is None:
         api = parse_connection(username, password)
 
+    logger.debug("API = %s", api)
+
     if auth_type is None:
         auth = VMQAuth(username, password, client_id)
+
+    logger.debug("Auth method = %s", auth)
 
     return MQTTConnection(api, auth)
