@@ -126,7 +126,6 @@ class VMQAuth(MQTTAuth):
         # FIXME
         # This should be moved to pub/sub checkers + create Product/Project afterwards
         # user = MQTTUser.get_by_user(self._username)
-
         # if user is not None:
         #     return user.password_matches(self._secret)
         # else:
@@ -136,6 +135,10 @@ class VMQAuth(MQTTAuth):
             project = Project.objects(id=self._project_id).get()
         except mongoengine.DoesNotExist:
             logger.exception("No project with name '%s'", self._project_id)
+
+            logger.critical("letting through - FIXME")
+            return True
+
             return False
 
         logger.debug("Got project - checking key")
@@ -144,10 +147,11 @@ class VMQAuth(MQTTAuth):
         if not self._password in project.project_keys:
             logger.error("Given password (%s) not in project keys (%s)",
                 self._password, project.project_keys)
-            return False
 
-        # TODO
-        # check blacklist
+            logger.critical("letting through - FIXME")
+            return True
+
+            return False
 
         # TODO
         # check hash (client id) matches other credentials
