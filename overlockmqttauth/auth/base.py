@@ -5,7 +5,8 @@ class MQTTAuth(metaclass=ABCMeta):
 
     def __init__(self, username, password, client_id):
         self._username = username
-        self._password = password
+        # FIXME
+        _, self._password = password.split(":")
         self._client_id = client_id
 
     @abstractproperty
@@ -25,7 +26,7 @@ class MQTTAuth(metaclass=ABCMeta):
         """
 
     @abstractproperty
-    def authorized(self):
+    def authenticated(self):
         """Whether this connection is valid
 
         For it to be valid:

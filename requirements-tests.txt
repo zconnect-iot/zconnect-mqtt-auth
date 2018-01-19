@@ -1,3 +1,4 @@
 pytest
+pylint
 -r requirements.txt
 -e .[vernemq]

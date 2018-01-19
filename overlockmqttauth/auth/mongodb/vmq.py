@@ -74,7 +74,7 @@ class MQTTUser(Document):
         try:
             auth_doc = MQTTUser.objects(username=username).get()
         except mongoengine.DoesNotExist:
-            logger.info("No user '%s' in the database")
+            logger.info("No user '%s' in the database", username)
             return None
 
         return auth_doc
@@ -100,7 +100,7 @@ class MQTTUser(Document):
         return user.password_matches(password)
 
     def password_matches(self, password):
-        match = bcrypt.checkpw(password, self.passhash)
+        match = bcrypt.checkpw(password.encode("utf8"), self.passhash.encode("utf8"))
         logger.debug("Password matches: %s", match)
         return match
 
@@ -119,5 +119,5 @@ class VMQAuth(MQTTAuth):
         return False
 
     @property
-    def authorized(self):
+    def authenticated(self):
         return MQTTUser.check_user_authed(self._username, self._password)

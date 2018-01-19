@@ -1,5 +1,3 @@
-# pylint: skip-file
-
 """Implements auth and management plugins for vernemq
 
 Connects to the vmq broker as well because it needs to publish management events
@@ -15,6 +13,8 @@ from flask import Flask, request, jsonify
 
 from overlockmqttauth.connection import get_connection
 from overlockmqttauth.auth.mongodb.util import mongo_connect
+from overlockmqttauth.client import client as mqttc
+
 from .util import (InvalidClientId,
         exit_handler,
         enter_handler,
@@ -22,7 +22,6 @@ from .util import (InvalidClientId,
         can_publish,
         can_subscribe,
     )
-from overlockmqttauth.client import client as mqttc
 
 logger = logging.getLogger(__name__)
 
