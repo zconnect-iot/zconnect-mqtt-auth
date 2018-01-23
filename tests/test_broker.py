@@ -21,6 +21,9 @@ def _getjson(response):
         return {}
 
 
+PROJECTID = "3b32154818bccbde03cfea45"
+
+
 class TestAuthRegisterByProject:
 
     def test_no_project(self, test_client):
@@ -28,7 +31,7 @@ class TestAuthRegisterByProject:
         response = test_client.post(
             "/auth_on_register",
             data=json.dumps({
-                "username": "v1:pid123:aircon:0xbeef",
+                "username": "v1:009a5ee11a2c6fd8393535d1:aircon:0xbeef",
                 "password": "p:abc",
                 "client_id": "2of3opf23",
             }),
@@ -43,7 +46,8 @@ class TestAuthRegisterByProject:
 
         Project.objects().delete()
         p = Project(
-            name="pid123",
+            name="Project 123",
+            id=PROJECTID,
             project_keys=["p:{}".format(uuid.uuid4())],
         )
         p.save()
@@ -51,7 +55,7 @@ class TestAuthRegisterByProject:
         response = test_client.post(
             "/auth_on_register",
             data=json.dumps({
-                "username": "v1:pid123:aircon:0xbeef",
+                "username": "v1:{}:aircon:0xbeef".format(PROJECTID),
                 "password": "p:abc",
                 "client_id": "2of3opf23",
             }),
@@ -66,7 +70,8 @@ class TestAuthRegisterByProject:
 
         Project.objects().delete()
         p = Project(
-            name="pid123",
+            name="Project 123",
+            id=PROJECTID,
             project_keys=["p:{}".format(uuid.uuid4())],
         )
         p.save()
@@ -74,7 +79,7 @@ class TestAuthRegisterByProject:
         response = test_client.post(
             "/auth_on_register",
             data=json.dumps({
-                "username": "v1:pid123:aircon:0xbeef",
+                "username": "v1:{}:aircon:0xbeef".format(PROJECTID),
                 "password": p.project_keys[0],
                 "client_id": "2of3opf23",
             }),
@@ -120,7 +125,7 @@ class TestAuthRegisterByUser:
         response = test_client.post(
             "/auth_on_register",
             data=json.dumps({
-                "username": "v1:pid123:blep:0xbeef",
+                "username": "v1:{}:blep:0xbeef".format(PROJECTID),
                 "password": "p:abc",
                 "client_id": "2of3opf23",
             }),
