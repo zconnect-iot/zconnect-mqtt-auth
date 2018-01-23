@@ -21,6 +21,8 @@ from .util import (InvalidClientId,
         client_id_to_org_type_id,
         can_publish,
         can_subscribe,
+        WORKER_PASSWORD,
+        WORKER_USERNAME,
     )
 
 logger = logging.getLogger(__name__)
@@ -33,6 +35,9 @@ mongo_connect()
 @app.route("/auth_on_register", methods=["POST"])
 def auth_on_register():
     """Called immediately on a new connection
+
+    If the username is 'overlock-worker', then the specific authorisation step
+    is skipped and the OVERLOCK_WORKER_PASSWORD environment variable is used.
 
     http://vernemq.com/docs/plugindevelopment/sessionlifecycle.html
 
@@ -59,6 +64,13 @@ def auth_on_register():
     response = {
         "result": "ok"
     }
+
+    if as_json.get("username") == WORKER_USERNAME:
+        if WORKER_PASSWORD is None:
+            logger.warning("No OVERLOCK_WORKER_PASSWORD env set - ignoring worker auth")
+        elif as_json["password"] == WORKER_PASSWORD:
+            logger.info("Worker connected")
+            return jsonify(response)
 
     try:
         connection = get_connection(

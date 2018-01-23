@@ -1,5 +1,6 @@
 import logging
 import re
+import os
 import json
 from datetime import datetime
 from overlockmqttauth.client import client as mqttc
@@ -165,6 +166,9 @@ def _get_regex(topic_type):
 PUB_ACL_REGEX = _get_regex("evt")
 SUB_ACL_REGEX = _get_regex("cmd")
 
+WORKER_USERNAME = "overlock-worker"
+WORKER_PASSWORD = os.getenv("OVERLOCK_WORKER_PASSWORD", None)
+
 
 def _matches(regex, payload):
     def _err(msg):
@@ -207,6 +211,12 @@ def can_publish(payload):
         dict: response to vernemq
     """
 
+    if payload.get("username") == WORKER_USERNAME:
+        logger.info("Allowing worker through")
+        return {
+            "result": "ok",
+        }
+
     return _matches(PUB_ACL_REGEX, payload)
 
 
@@ -220,5 +230,14 @@ def can_subscribe(payload):
         dict: response to vernemq
     """
 
+    if payload.get("username") == WORKER_USERNAME:
+        logger.info("Allowing worker through")
+        return {
+            "result": "ok",
+        }
+
     for sub in payload["topics"]:
+        # FIXME
+        # actually check all topics
+        # This doesn't matter for now?
         return _matches(SUB_ACL_REGEX, sub)

@@ -1,9 +1,11 @@
 import json
 import uuid
+from unittest.mock import patch
 
 import pytest
 
 from overlockmqttauth.brokers.vernemq import app
+from overlockmqttauth.brokers.util import WORKER_USERNAME
 from overlockmqttauth.auth.mongodb.vmq import MQTTUser
 # FIXME
 from overlockmqttauth.auth.mongodb.overlock import Project
@@ -209,3 +211,53 @@ class TestAuthSubscribe:
         assert {'result': {'error': 'Topic did not match regex'}} == _getjson(response)
         assert response._status_code == 200
 
+
+class TestWorkerConnect:
+
+    def test_worker_register(self, test_client):
+        password = "abc123"
+
+        with patch("overlockmqttauth.brokers.vernemq.WORKER_PASSWORD", password):
+            response = test_client.post(
+                "/auth_on_register",
+                data=json.dumps({
+                    "username": WORKER_USERNAME,
+                    "password": password,
+                    "client_id": "2of3opf23",
+                    "topics": [
+                        {
+                            "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/evt/boom/fmt/json",
+                        },
+                    ]
+                }),
+                content_type="application/json",
+            )
+
+        assert {"result": "ok"} == _getjson(response)
+        assert response._status_code == 200
+
+    @pytest.mark.parametrize("endpoint", (
+        "/auth_on_subscribe",
+        "/auth_on_publish",
+    ))
+    def test_worker_pubsub(self, test_client, endpoint):
+        password = "abc123"
+
+        with patch("overlockmqttauth.brokers.util.WORKER_PASSWORD", password):
+            response = test_client.post(
+                endpoint,
+                data=json.dumps({
+                    "username": WORKER_USERNAME,
+                    "password": password,
+                    "client_id": "2of3opf23",
+                    "topics": [
+                        {
+                            "topic": "/iot-2/type/gateway/id/v1:pid123:aircon:0xbeef/evt/boom/fmt/json",
+                        },
+                    ]
+                }),
+                content_type="application/json",
+            )
+
+        assert {"result": "ok"} == _getjson(response)
+        assert response._status_code == 200
