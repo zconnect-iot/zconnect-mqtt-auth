@@ -1,0 +1,17 @@
+---
+
+.beforehook: &beforehook
+    before_script:
+        - pip install tox
+
+test pyflint3.5:
+    image: python:3.5-alpine
+    <<: *beforehook
+    script:
+        - tox -e py35lint
+
+test py3.5:
+    image: python:3.5-alpine
+    <<: *beforehook
+    script:
+        - tox -e py35

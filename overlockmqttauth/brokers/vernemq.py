@@ -66,7 +66,7 @@ def auth_on_register():
             as_json["password"],
             as_json["client_id"],
         )
-    except Exception:
+    except Exception: # pylint: disable=broad-except
         logger.exception("error parsing connection")
 
         response = {
