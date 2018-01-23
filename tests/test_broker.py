@@ -2,7 +2,6 @@ import json
 import uuid
 
 import pytest
-import mongoengine
 
 from overlockmqttauth.brokers.vernemq import app
 from overlockmqttauth.auth.mongodb.vmq import MQTTUser

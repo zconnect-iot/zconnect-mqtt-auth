@@ -69,9 +69,6 @@ def auth_on_register():
     except Exception:
         logger.exception("error parsing connection")
 
-        logger.critical("letting through - FIXME")
-        return jsonify(response)
-
         response = {
             "result": "error"
         }

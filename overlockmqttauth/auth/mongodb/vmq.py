@@ -136,9 +136,6 @@ class VMQAuth(MQTTAuth):
         except mongoengine.DoesNotExist:
             logger.exception("No project with name '%s'", self._project_id)
 
-            logger.critical("letting through - FIXME")
-            return True
-
             return False
 
         logger.debug("Got project - checking key")
@@ -147,9 +144,6 @@ class VMQAuth(MQTTAuth):
         if not self._password in project.project_keys:
             logger.error("Given password (%s) not in project keys (%s)",
                 self._password, project.project_keys)
-
-            logger.critical("letting through - FIXME")
-            return True
 
             return False
 
