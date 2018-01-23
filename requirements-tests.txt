@@ -1,4 +1,7 @@
 pytest
 pylint
+colorlog
+
 -r requirements.txt
+
 -e .[vernemq]
