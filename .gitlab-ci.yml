@@ -3,15 +3,16 @@
 .beforehook: &beforehook
     before_script:
         - pip install tox
+        - apt-get update && apt-get install build-essential
 
 test pyflint3.5:
-    image: python:3.5-alpine
+    image: python:3.5-slim-jessie
     <<: *beforehook
     script:
         - tox -e py35lint
 
 test py3.5:
-    image: python:3.5-alpine
+    image: python:3.5-slim-jessie
     <<: *beforehook
     script:
         - tox -e py35
