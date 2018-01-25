@@ -1,5 +1,6 @@
 # pylint: skip-file
 
+import os
 import logging
 import string
 import random
@@ -38,8 +39,11 @@ def get_client():
     """
     mqttc = mqtt.Client(client_id="controller.{:s}".format(id_generator()), transport="websockets")
 
+    username = os.getenv("VMQ_USERNAME", "overlock-worker")
+    password = os.getenv("VMQ_PASSWORD", None)
+
     # Not setting TLS or anything - this should only be internal
-    mqttc.username_pw_set("controller", "controller123")
+    mqttc.username_pw_set(username, password)
     mqttc.on_log = mqtt_log
     mqttc.on_connect = mqtt_connect
     mqttc.on_message = mqtt_message
