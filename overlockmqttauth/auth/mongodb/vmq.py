@@ -132,7 +132,7 @@ class VMQAuth(MQTTAuth):
         #     logger.error("No user with name - checking project")
 
         try:
-            project = Project.objects(id=self._project_id).get()
+            project_keys = Project.objects(id=self._project_id).scalar("project_keys").get()
         except mongoengine.DoesNotExist:
             logger.exception("No project with name '%s'", self._project_id)
 
@@ -141,9 +141,9 @@ class VMQAuth(MQTTAuth):
         logger.debug("Got project - checking key")
 
         # Whole password is stored in database, including 'p:' prefix
-        if not self._password in project.project_keys:
+        if not self._password in project_keys:
             logger.error("Given password (%s) not in project keys (%s)",
-                self._password, project.project_keys)
+                self._password, project_keys)
 
             return False
 
