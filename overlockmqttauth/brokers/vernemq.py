@@ -59,7 +59,7 @@ def auth_on_register():
 
     as_json = request.json
 
-    logger.debug("auth_on_register: %s", as_json)
+    logger.info("auth_on_register: %s", as_json)
 
     response = {
         "result": "ok"
