@@ -82,7 +82,9 @@ def auth_on_register():
         logger.exception("error parsing connection")
 
         response = {
-            "result": "error"
+            "result": {
+                "error": "Unable to parse connection details",
+            }
         }
 
     else:
@@ -90,13 +92,17 @@ def auth_on_register():
             logger.info("Could not find user with given username/pw")
 
             response = {
-                "result": "error"
+                "result": {
+                    "error": "Couldn't authenticate connection details",
+                }
             }
         elif connection.blacklisted:
             logger.info("User has been blacklisted")
 
             response = {
-                "result": "error"
+                "result": {
+                    "error": "User blacklisted",
+                }
             }
 
     return jsonify(response)
