@@ -149,16 +149,16 @@ def _get_regex(topic_type):
     """
     return re.compile(r"""
     ^
-        /iot-2
+        /?iot-2
         /type/(?P<message_type>\w+)   # device type
         /id/(?P<auto_id>                # full identifier for this device
             (?P<api_ver>v[0-9])         # api version - v1, v2, etc
-            :(?P<project_id>\w+)        # project id
-            :(?P<product_name>\w+)      # name of product (same as device type?)
-            :(?P<client_node_id>\w+)    # 'device id'
+            :(?P<project_id>[\w_-]+)        # project id
+            :(?P<product_name>[\w_-]+)      # name of product (same as device type?)
+            :(?P<client_node_id>[\w_-]+)    # 'device id'
         )
         /{0:s}/(?P<event>\w+)              # type of event?
-        /fmt/json
+        /fmt/\w+
     $
     """.format(topic_type), re.VERBOSE)
 
