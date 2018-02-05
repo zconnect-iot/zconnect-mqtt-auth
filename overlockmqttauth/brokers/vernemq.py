@@ -7,8 +7,10 @@ http://vernemq.com/docs/plugindevelopment/
 """
 
 import logging
+import logging.config
 import os
 
+import yaml
 from flask import Flask, request, jsonify
 
 from overlockmqttauth.connection import get_connection
@@ -261,7 +263,27 @@ def on_client_offline():
 
 
 def start_broker():
-    logging.basicConfig(level=logging.INFO)
+
+    log_cfg = """
+logging:
+    version: 1
+    formatters:
+        google:
+            (): overlockmqttauth.google_logging.GoogleFormatter
+    handlers:
+        stderr:
+            class: logging.StreamHandler
+            formatter: google
+    loggers:
+        overlockmqttauth:
+            handlers:
+                - stderr
+            level: DEBUG
+            propagate: False
+"""
+
+    as_dict = yaml.load(log_cfg)
+    logging.config.dictConfig(as_dict)
 
     mqtt_host = os.getenv('MQTT_HOST', "localhost")
     mqtt_port = int(os.getenv('MQTT_PORT', 1883))
