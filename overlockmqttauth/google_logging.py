@@ -3,6 +3,8 @@ import os
 import logging
 from logging import Formatter
 
+# pylint: disable=anomalous-backslash-in-string
+
 
 class GoogleFormatter(Formatter):
 
