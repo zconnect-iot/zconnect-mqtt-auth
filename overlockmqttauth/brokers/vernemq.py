@@ -265,21 +265,20 @@ def on_client_offline():
 def start_broker():
 
     log_cfg = """
-logging:
-    version: 1
-    formatters:
-        google:
-            (): overlockmqttauth.google_logging.GoogleFormatter
-    handlers:
-        stderr:
-            class: logging.StreamHandler
-            formatter: google
-    loggers:
-        overlockmqttauth:
-            handlers:
-                - stderr
-            level: DEBUG
-            propagate: False
+version: 1
+formatters:
+    google:
+        (): overlockmqttauth.google_logging.GoogleFormatter
+handlers:
+    stderr:
+        class: logging.StreamHandler
+        formatter: google
+loggers:
+    overlockmqttauth:
+        handlers:
+            - stderr
+        level: DEBUG
+        propagate: False
 """
 
     as_dict = yaml.load(log_cfg)
