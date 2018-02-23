@@ -1,18 +1,24 @@
 .bumpversion.cfg
+.cache
 .coverage
-Dockerfile
+Dockerfile.vernemq
 .dockerignore
 .eggs
+example
 .git
 .gitignore
+.gitlab-ci.yml
 # MANIFEST.in
 # overlockmqttauth
 overlockmqttauth.egg-info
 .pylintrc
+.pytest_cache
 README.md
+requirements-tests.txt
 # requirements.txt
 # setup.cfg
 # setup.py
+tags
 tests
 .tox
 tox.ini
